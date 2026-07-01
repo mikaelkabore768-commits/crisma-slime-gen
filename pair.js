@@ -79,7 +79,7 @@ function randomMegaId(len = 6, numLen = 4) {
     return `${out}${number}`;
 }
 
-// ----- Route principale (inchangée, sauf la partie envoi) -----
+
 router.get('/', async (req, res) => {
     let num = req.query.number;
     const dirs = './auth_info_baileys';
@@ -132,7 +132,7 @@ router.get('/', async (req, res) => {
                         const match = megaLink.match(/mega\.nz\/file\/([^#]+)#(.+)/);
                         if (!match) throw new Error('Lien Mega invalide');
 
-                        const sessionId = `vdz~${match[1]}#${match[2]}`;
+                        const sessionId = `slime~${match[1]}#${match[2]}`;
                         const userJid = jidNormalizedUser(num + '@s.whatsapp.net');
 
                         
