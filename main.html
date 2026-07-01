@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>𝗦𝗟𝗜𝗠𝗘 𝗣𝗥𝗜𝗠𝗘 — 𝗘𝗹𝗶𝘁𝗲 𝗵𝘂𝗯</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+:root {
+  --bg-dark: #07070a;
+  --gold: #D4AF37;
+  --gold-glow: rgba(212, 175, 55, 0.3);
+  --red: #FF3333;
+  --red-glow: rgba(255, 51, 51, 0.4);
+  --glass: rgba(15, 10, 10, 0.75);
+}
+
+* { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; padding: 0; }
+
+body {
+  min-height: 100vh;
+  background-color: var(--bg-dark);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  overflow-x: hidden;
+  position: relative;
+}
+
+
+.video-bg-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden; }
+.video-bg-container video { width: 100%; height: 100%; object-fit: cover; }
+.video-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(135deg, rgba(7,7,10,0.85), rgba(20,5,5,0.78));
+  backdrop-filter: blur(2px);
+  z-index: -1;
+}
+
+
+.navbar {
+  width: 100%; max-width: 1200px; padding: 20px 25px;
+  display: flex; justify-content: space-between; align-items: center; z-index: 10;
+}
+.nav-brand {
+  font-family: 'Cinzel', serif; font-size: 20px; letter-spacing: 2px; color: var(--gold); text-shadow: 0 0 10px var(--gold-glow);
+}
+
+
+.music-player-container { position: relative; z-index: 100; }
+.music-trigger {
+  background: var(--glass); border: 1px solid var(--gold); color: var(--gold);
+  padding: 10px 14px; border-radius: 30px; cursor: pointer; font-weight: 700; font-size: 13px;
+  display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px var(--gold-glow); transition: .3s;
+}
+.music-trigger:hover { transform: scale(1.05); background: rgba(212,175,55,0.1); }
+.music-menu {
+  position: absolute; top: 45px; right: 0; background: #0f0b0b; border: 1px solid rgba(212,175,55,0.3);
+  border-radius: 16px; width: 220px; padding: 10px; display: none; flex-direction: column; gap: 5px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+}
+.music-menu.active { display: flex; animation: fadeIn .3s ease; }
+.track-btn {
+  background: transparent; border: none; color: #ccc; text-align: left; padding: 8px 12px;
+  font-size: 12px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: .2s;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.track-btn:hover, .track-btn.playing { background: rgba(255,51,51,0.15); color: var(--red); }
+.player-controls {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 5px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.08);
+}
+.control-btn {
+  background: transparent; border: none; color: #fff; cursor: pointer; font-size: 14px; padding: 5px;
+}
+.control-btn:hover { color: var(--gold); }
+
+
+.main-layout {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 40px 20px; z-index: 2;
+}
+.wrapper {
+  background: var(--glass); border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 28px;
+  padding: 45px 35px; width: 100%; max-width: 450px; box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85);
+  text-align: center; position: relative; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s;
+}
+.wrapper:hover { transform: translateY(-5px); border-color: rgba(255, 51, 51, 0.3); }
+.wrapper::after {
+  content: ''; position: absolute; top: 0; left: 10%; width: 80%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), var(--red), transparent);
+}
+
+.logo-container { width: 110px; height: 110px; margin: 0 auto 25px; border-radius: 50%; position: relative; border: 2px solid var(--gold); box-shadow: 0 0 30px var(--gold-glow); }
+.logo-container img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+h1 { font-family: 'Cinzel', serif; font-size: 2.3rem; font-weight: 900; letter-spacing: 3px; background: linear-gradient(135deg, #ffffff 30%, var(--gold) 70%, #fff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; }
+.subtitle { font-size: 12px; color: var(--red); letter-spacing: 3px; text-transform: uppercase; font-weight: 800; margin-bottom: 25px; }
+
+.btn-zone { margin: 30px 0 15px; }
+.btn {
+  width: 100%; padding: 16px 20px; margin-bottom: 16px; border-radius: 14px; font-size: 14px; font-weight: 800;
+  letter-spacing: 2px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 12px; text-transform: uppercase;
+}
+.btn.primary { background: linear-gradient(135deg, #700000, var(--red)); border: 1px solid rgba(255,51,51,0.5); color: #fff; box-shadow: 0 6px 20px var(--red-glow); }
+.btn.primary:hover { transform: scale(1.02); box-shadow: 0 10px 25px rgba(255, 51, 51, 0.6); }
+.btn.secondary { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(212, 175, 55, 0.4); color: #fff; }
+.btn.secondary:hover { background: rgba(212, 175, 55, 0.1); border-color: var(--gold); box-shadow: 0 6px 20px var(--gold-glow); }
+
+
+.info-center { width: 100%; max-width: 450px; margin-top: 25px; background: var(--glass); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 20px; padding: 20px; }
+.info-center h3 { font-size: 13px; text-transform: uppercase; color: var(--gold); letter-spacing: 1px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.info-links { display: flex; justify-content: space-between; gap: 10px; }
+.info-links a {
+  flex: 1; text-decoration: none; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08);
+  padding: 10px; border-radius: 10px; text-align: center; color: #ccc; font-size: 12px; font-weight: 600; transition: .3s; display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.info-links a:hover { color: #fff; border-color: var(--red); background: rgba(255,51,51,0.05); transform: translateY(-2px); }
+
+.footer { margin-top: 30px; font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: 1px; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+
+<body>
+
+<div class="video-bg-container">
+  <video id="bgVideo" autoplay muted loop playsinline></video>
+</div>
+<div class="video-overlay"></div>
+
+<nav class="navbar">
+  <div class="nav-brand">SLIME PRIME</div>
+  
+  <div class="music-player-container">
+    <div class="music-trigger" onclick="toggleMusicMenu()">
+      <i class="fa-solid fa-music" id="musicIcon"></i> <span id="nowPlayingText">AUDIO HUB</span>
+    </div>
+    <div class="music-menu" id="musicMenu">
+      <button class="track-btn" onclick="playTrack(0, this)">Montagem Supersonic <i class="fa-solid fa-play"></i></button>
+      <button class="track-btn" onclick="playTrack(1, this)">Montagem Batch <i class="fa-solid fa-play"></i></button>
+      <button class="track-btn" onclick="playTrack(2, this)">Montagem Rugada <i class="fa-solid fa-play"></i></button>
+      <button class="track-btn" onclick="playTrack(3, this)">Dia de Fiesta <i class="fa-solid fa-play"></i></button>
+      <div class="player-controls">
+        <button class="control-btn" onclick="pauseAudio()"><i class="fa-solid fa-pause"></i> Pause</button>
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="0.5" onchange="changeVolume(this.value)" style="width: 80px; accent-color: var(--gold);">
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="main-layout">
+  <div class="wrapper">
+    <div class="logo-container">
+      <img id="brandLogo" src="" alt="Nexus Logo">
+    </div>
+
+    <h1>SLIME PRIME</h1>
+    <div class="subtitle">SESSION ID GEN</div>
+    <p style="color: #b0b0b5; font-size: 13px; line-height: 1.6;">Projet openSource pour la generation de session id pour vôtre bot utilisant la connection directe par creds file</p>
+
+    <div class="btn-zone">
+      <button onclick="window.open('/qrpage')" class="btn primary">
+        <i class="fa-solid fa-qrcode"></i> QR CODE SYSTEM
+      </button>
+
+      <button onclick="window.open('/pair')" class="btn secondary">
+        <i class="fa-solid fa-link"></i> PAIRING CODE ACCESS
+      </button>
+    </div>
+
+    <div class="footer">
+      © ʙʏ ᴛʜᴇ ᴤʟɪᴍᴇ ᴛᴇᴄʜ ᴇᴍᴘɪʀᴇ • ᴏᴘᴇɴ ᴤᴏᴜʀᴄᴇ
+    </div>
+  </div>
+
+  <div class="info-center">
+    <h3><i class="fa-solid fa-circle-info"></i> Canaux Officiels & Support</h3>
+    <div class="info-links">
+      <a href="https://whatsapp.com/channel/0029Vb8Uv7kFcow3HrM6iI3P" target="_blank"><i class="fa-brands fa-whatsapp" style="color: #25D366"></i> Canal WA</a>
+      <a href="https://t.me/SLIME_TECH_EMPIRE" target="_blank"><i class="fa-brands fa-telegram" style="color: #26A5E4"></i> Telegram</a>
+      <a href="https://t.me/VendrozAccount9" target="_blank"><i class="fa-solid fa-headset" style="color: var(--gold)"></i> Support</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const VIDEOS = [
+  "https://files.catbox.moe/kgdo5j.mp4", "https://files.catbox.moe/8tp5hx.mp4",
+  "https://files.catbox.moe/14dlf9.mp4", "https://files.catbox.moe/ec26zu.mp4",
+  "https://files.catbox.moe/bqbika.mp4", "https://files.catbox.moe/mpmdga.mp4"
+];
+const IMAGES = [
+  "https://files.catbox.moe/iszgop.jpg", "https://files.catbox.moe/hgel1c.jpg",
+  "https://files.catbox.moe/dl8yrx.jpg", "https://files.catbox.moe/el1bmz.jpg"
+];
+const TRACKS = [
+  "https://files.catbox.moe/1pqop4.mp3",
+  "https://files.catbox.moe/4nr695.mp3",
+  "https://files.catbox.moe/829pt6.mp3",
+  "https://files.catbox.moe/lg867t.mp3"
+];
+
+let currentAudio = new Audio();
+
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('bgVideo').src = VIDEOS[Math.floor(Math.random() * VIDEOS.length)];
+  document.getElementById('brandLogo').src = IMAGES[Math.floor(Math.random() * IMAGES.length)];
+});
+
+function toggleMusicMenu() {
+  document.getElementById('musicMenu').classList.toggle('active');
+}
+
+function playTrack(idx, btn) {
+  currentAudio.src = TRACKS[idx];
+  currentAudio.volume = document.getElementById('volumeSlider').value;
+  currentAudio.play();
+  
+  document.querySelectorAll('.track-btn').forEach(b => b.classList.remove('playing'));
+  btn.classList.add('playing');
+  document.getElementById('musicIcon').className = "fa-solid fa-compact-disc fa-spin";
+  document.getElementById('nowPlayingText').innerText = btn.innerText.trim();
+}
+
+function pauseAudio() {
+  currentAudio.pause();
+  document.getElementById('musicIcon').className = "fa-solid fa-music";
+}
+
+function changeVolume(val) {
+  currentAudio.volume = val;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>𝗦𝗟𝗜𝗠𝗘 𝗣𝗥𝗜𝗠𝗘 — 𝗘𝗹𝗶𝘁𝗲 𝗵𝘂𝗯/pair</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+:root {
+  --bg-dark: #07070a;
+  --gold: #D4AF37;
+  --gold-glow: rgba(212, 175, 55, 0.3);
+  --red: #FF3333;
+  --red-glow: rgba(255, 51, 51, 0.4);
+  --glass: rgba(12, 8, 8, 0.82);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+body {
+  min-height: 100vh; background-color: var(--bg-dark); color: #fff;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start; overflow-x: hidden; position: relative;
+}
+
+.video-bg-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden; }
+.video-bg-container video { width: 100%; height: 100%; object-fit: cover; }
+.video-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(135deg, rgba(7,7,10,0.85), rgba(20,5,5,0.78));
+  backdrop-filter: blur(2px);
+  z-index: -1;
+}
+
+
+.navbar {
+  width: 100%; max-width: 1200px; padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; z-index: 10;
+}
+.navbar a { color: #ccc; text-decoration: none; font-size: 13px; font-weight: 700; transition: .3s; }
+.navbar a:hover { color: var(--gold); }
+
+
+.music-player-container { position: relative; z-index: 100; }
+.music-trigger {
+  background: var(--glass); border: 1px solid var(--gold); color: var(--gold);
+  padding: 8px 12px; border-radius: 30px; cursor: pointer; font-weight: 700; font-size: 12px;
+  display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px var(--gold-glow); transition: .3s;
+}
+.music-menu {
+  position: absolute; top: 45px; right: 0; background: #0f0b0b; border: 1px solid rgba(212,175,55,0.3);
+  border-radius: 16px; width: 220px; padding: 10px; display: none; flex-direction: column; gap: 5px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+}
+.music-menu.active { display: flex; animation: fadeIn .3s ease; }
+.track-btn {
+  background: transparent; border: none; color: #ccc; text-align: left; padding: 8px 12px; font-size: 11px; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; width: 100%;
+}
+.track-btn:hover, .track-btn.playing { background: rgba(255,51,51,0.15); color: var(--red); }
+.player-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.08); }
+
+
+.main-layout { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 30px 20px; z-index: 2; }
+.card {
+  width: 100%; max-width: 400px; background: var(--glass); border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 24px; padding: 35px 28px; box-shadow: 0 30px 60px rgba(0,0,0,.9); position: relative; text-align: center;
+}
+.card::before { content: ''; position: absolute; top: 0; left: 10%; width: 80%; height: 2px; background: linear-gradient(90deg, transparent, var(--red), var(--gold), transparent); }
+.card h2 { font-family: 'Cinzel', serif; font-size: 22px; color: #fff; margin-bottom: 6px; letter-spacing: 1px; }
+.card p { font-size: 13px; color: #a0a0aa; margin-bottom: 25px; }
+
+.input-box { display: flex; align-items: center; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 14px 18px; margin-bottom: 20px; transition: .3s ease; }
+.input-box:focus-within { border-color: var(--gold); box-shadow: 0 0 15px var(--gold-glow); background: rgba(255, 255, 255, 0.05); }
+.input-box i { color: var(--gold); font-size: 16px; margin-right: 14px; }
+.input-box input { background: transparent; border: none; outline: none; color: #fff; font-size: 16px; width: 100%; font-weight: 600; }
+
+button#submit {
+  width: 100%; border: none; padding: 16px; border-radius: 14px; background: linear-gradient(135deg, #a30000, var(--red)); color: #fff; font-size: 14px; font-weight: 800; letter-spacing: 1px; cursor: pointer; transition: all .3s ease; box-shadow: 0 6px 20px var(--red-glow);
+}
+button#submit:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(255,51,51,0.6); }
+
+#pair { margin-top: 22px; min-height: 40px; display: flex; align-items: center; justify-content: center; }
+.loader { width: 24px; height: 24px; border: 3px solid var(--gold); border-top-color: transparent; border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.copy-btn {
+  margin-top: 15px; padding: 12px 20px; border-radius: 10px; border: 1px solid rgba(212,175,55,0.4); background: rgba(212,175,55,0.05); color: var(--gold); font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: .2s;
+}
+.copy-btn:hover { background: rgba(212,175,55,0.15); }
+.copy-btn.success { background: #16a34a; color: white; border-color: #16a34a; }
+
+
+.info-center { width: 100%; max-width: 400px; margin-top: 25px; background: var(--glass); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 20px; padding: 20px; }
+.info-center h3 { font-size: 13px; text-transform: uppercase; color: var(--gold); letter-spacing: 1px; margin-bottom: 12px; }
+.info-links { display: flex; justify-content: space-between; gap: 10px; }
+.info-links a {
+  flex: 1; text-decoration: none; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); padding: 10px; border-radius: 10px; text-align: center; color: #ccc; font-size: 12px; font-weight: 600; transition: .3s; display: flex; align-items: center; justify-content: center; gap: 4px;
+}
+.info-links a:hover { color: #fff; border-color: var(--red); background: rgba(255,51,51,0.05); transform: translateY(-2px); }
+
+.footer { font-size: 11px; color: #555; margin-top: 20px; text-transform: uppercase; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+
+<body>
+
+<div class="video-bg-container">
+  <video id="bgVideo" autoplay muted loop playsinline></video>
+</div>
+<div class="video-overlay"></div>
+
+<nav class="navbar">
+  <a href="/"><i class="fa-solid fa-arrow-left"></i> Retour au Hub</a>
+  
+  <div class="music-player-container">
+    <div class="music-trigger" onclick="toggleMusicMenu()">
+      <i class="fa-solid fa-music" id="musicIcon"></i> <span id="nowPlayingText">AUDIO</span>
+    </div>
+    <div class="music-menu" id="musicMenu">
+      <button class="track-btn" onclick="playTrack(0, this)">Supersonic <i class="fa-solid fa-play"></i></button>
+      <button class="track-btn" onclick="playTrack(1, this)">Batch <i class="fa-solid fa-play"></i></button>
+      <button class="track-btn" onclick="playTrack(2, this)">Rugada <i class="fa-solid fa-play"></i></button>
+      <button class="track-btn" onclick="playTrack(3, this)">Fiesta <i class="fa-solid fa-play"></i></button>
+      <div class="player-controls">
+        <button onclick="pauseAudio()" style="background:transparent; border:none; color:#fff; cursor:pointer; font-size:11px;"><i class="fa-solid fa-pause"></i> Pause</button>
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="0.5" onchange="changeVolume(this.value)" style="width: 60px; accent-color: var(--gold);">
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="main-layout">
+  <div class="card">
+    <h2>PAIRES SYSTEM</h2>
+    <p>Entrez votre numéro complet avec l'indicatif international</p>
+
+    <div class="input-box">
+      <i class="fa-solid fa-phone"></i>
+      <input type="number" id="number" placeholder="Ex: 226XXXXXXXX">
+    </div>
+
+    <button id="submit">
+      <i class="fa-solid fa-key"></i> Générer le Code Sécurisé
+    </button>
+
+    <main id="pair"></main>
+
+    <div class="footer">© ʙʏ ᴛʜᴇ ᴤʟɪᴍᴇ ᴛᴇᴄʜ ᴇᴍᴘɪʀᴇ • ᴏᴘᴇɴ ᴤᴏᴜʀᴄᴇ</div>
+  </div>
+
+  <div class="info-center">
+    <h3><i class="fa-solid fa-circle-info"></i> Centre d'Aide & Réseaux</h3>
+    <div class="info-links">
+      <a href="https://whatsapp.com/channel/0029Vb8Uv7kFcow3HrM6iI3P" target="_blank"><i class="fa-brands fa-whatsapp"></i> Canalwa</a>
+      <a href="https://t.me/SLIME_TECH_EMPIRE" target="_blank"><i class="fa-brands fa-telegram"></i> Telegram</a>
+      <a href="https://t.me/VendrozAccount9" target="_blank"><i class="fa-solid fa-headset"></i> Support</a>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0-alpha.1/axios.min.js"></script>
+<script>
+const VIDEOS = [
+  "https://files.catbox.moe/kgdo5j.mp4", "https://files.catbox.moe/8tp5hx.mp4",
+  "https://files.catbox.moe/14dlf9.mp4", "https://files.catbox.moe/ec26zu.mp4",
+  "https://files.catbox.moe/bqbika.mp4", "https://files.catbox.moe/mpmdga.mp4"
+];
+const TRACKS = [
+  "https://files.catbox.moe/1pqop4.mp3", "https://files.catbox.moe/4nr695.mp3",
+  "https://files.catbox.moe/829pt6.mp3", "https://files.catbox.moe/lg867t.mp3"
+];
+
+let currentAudio = new Audio();
+
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('bgVideo').src = VIDEOS[Math.floor(Math.random() * VIDEOS.length)];
+});
+
+function toggleMusicMenu() { document.getElementById('musicMenu').classList.toggle('active'); }
+function playTrack(idx, btn) {
+  currentAudio.src = TRACKS[idx]; currentAudio.volume = document.getElementById('volumeSlider').value; currentAudio.play();
+  document.querySelectorAll('.track-btn').forEach(b => b.classList.remove('playing')); btn.classList.add('playing');
+  document.getElementById('musicIcon').className = "fa-solid fa-compact-disc fa-spin"; document.getElementById('nowPlayingText').innerText = btn.innerText.trim();
+}
+function pauseAudio() { currentAudio.pause(); document.getElementById('musicIcon').className = "fa-solid fa-music"; }
+function changeVolume(val) { currentAudio.volume = val; }
+
+let a = document.getElementById("pair");
+let b = document.getElementById("submit");
+let c = document.getElementById("number");
+
+async function Copy() {
+  let codeEl = document.getElementById("copy");
+  let btn = document.querySelector(".copy-btn");
+  await navigator.clipboard.writeText(codeEl.dataset.code);
+  btn.classList.add("success");
+  btn.innerHTML = '<i class="fa-solid fa-check"></i> Copié !';
+  setTimeout(() => {
+    btn.classList.remove("success");
+    btn.innerHTML = '<i class="fa-solid fa-copy"></i> Copier le Code';
+  }, 1200);
+}
+
+b.addEventListener("click", async (e) => {
+  e.preventDefault();
+  if (!c.value || c.value.replace(/[^0-9]/g, "").length < 11) {
+    a.innerHTML = '<p style="color:#FF3333; font-weight:700; font-size:14px;"><i class="fa-solid fa-triangle-exclamation"></i> Format de numéro invalide</p>';
+    return;
+  }
+  const bc = c.value.replace(/[^0-9]/g, "");
+  a.innerHTML = '<div class="loader"></div>';
+  try {
+    let { data } = await axios(`/code?number=${bc}`);
+    let code = data.code || "Indisponible";
+    a.innerHTML = `
+      <div style="width:100%">
+        <div id="copy" data-code="${code}" style="color:var(--gold); font-weight:900; font-size:24px; letter-spacing:2px; text-shadow: 0 0 10px var(--gold-glow)">
+          ${code}
+        </div>
+        <button class="copy-btn" onclick="Copy()">
+          <i class="fa-solid fa-copy"></i> Copier le Code
+        </button>
+      </div>`;
+  } catch {
+    a.innerHTML = '<p style="color:#FF3333; font-weight:700; font-size:14px;"><i class="fa-solid fa-circle-xmark"></i> Erreur Serveur.</p>';
+  }
+});
+</script>
+</body>
+</html>
