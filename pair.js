@@ -16,7 +16,7 @@ import { upload as megaUpload } from './mega.js';
 
 const router = express.Router();
 
-// ----- AJOUT 1 : channelInfo -----
+
 const channelInfo = {
   contextInfo: {
     forwardingScore: 999,
@@ -29,7 +29,7 @@ const channelInfo = {
   }
 };
 
-// ----- AJOUT 2 : fakeQuoted -----
+
 const fakeQuoted = {
   key: {
     fromMe: false,
@@ -50,23 +50,23 @@ END:VCARD`
   }
 };
 
-// ----- AJOUT 3 : fonction pour récupérer l'image -----
+
 async function fetchImageBuffer(url) {
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Erreur HTTP ${response.status}`);
     return Buffer.from(await response.arrayBuffer());
 }
 
-// ----- Message (inchangé) -----
+
 const MESSAGE = `> *߷ ɴᴏᴛᴇ: 𝙽𝙴 𝙿𝙰𝚁𝚃𝙰𝙶𝙴 𝙿𝙾𝙸𝙽𝚃 𝚃𝙰 𝚂𝙴𝚂𝚂𝙸𝙾𝙽 𝙸𝙳 𝙽𝙸 𝚃𝙾𝙽 𝙵𝙸𝙲𝙷𝙸𝙴𝚁 𝙲𝚁𝙴𝙳𝚂.𝙹𝚂𝙾𝙽*\n\n
-*╭━✥🇸𝗟𝗶𝗺𝗲 🇵𝗥𝗶𝗺𝗲 𝗚𝗲𝗻 ✥━⚯*\n
-*┃ 𓅷𝐌𝐞𝐫𝐜𝐢 𝐏𝐨𝐮𝐫 𝐕ô𝐭𝐫𝐞 𝐂𝐡𝐨𝐢ｘ*\n
-*┃ 𓅷𝐅𝐚𝐜𝐢𝐥𝐞 • 𝐒éｃｕｒｉｓé • 𝐑ａｐｉｄｅ*\n
-*┃ 𓅷𝐏𝐚𝐫 𝐓ｈｅ 𝐒ｌｉｍｅ 𝐓ｅｃｈ 𝐄ｍｐｉｒｅ*\n
-*╰━━━━━━━━━━━━━━━━━━━━⚯*\n
+*╭━✥🇸𝗟𝗶𝗺𝗲 🇵𝗥𝗶𝗺𝗲 𝗚𝗲𝗻 ✥━⚯*
+*┃ 𓅷𝐌𝐞𝐫𝐜𝐢 𝐏𝐨𝐮𝐫 𝐕ô𝐭𝐫𝐞 𝐂𝐡𝐨𝐢ｘ*
+*┃ 𓅷𝐅𝐚𝐜𝐢𝐥𝐞 • 𝐒éｃｕｒｉｓé • 𝐑ａｐｉｄｅ*
+*┃ 𓅷𝐏𝐚𝐫 𝐓ｈｅ 𝐒ｌｉｍｅ 𝐓ｅｃｈ 𝐄ｍｐｉｒｅ*
+*╰━━━━━━━━━━━━━━━━━━━━⚯*
 > 𝙿𝙾𝚄𝚁 𝙿𝙻𝚄𝚂 𝙳'𝙸𝙽𝙵𝙾𝚂, 𝚁𝙴𝙹𝙾𝙸𝙽𝚂 𝙻𝙰 𝙲𝙷𝙰𝙸𝙽𝙴 𝚂𝚄𝙿𝙿𝙾𝚁𝚃\n`;
 
-// ----- Utilitaires (inchangés) -----
+
 async function removeFile(path) {
     if (fs.existsSync(path)) await fs.remove(path);
 }
@@ -135,20 +135,20 @@ router.get('/', async (req, res) => {
                         const sessionId = `vdz~${match[1]}#${match[2]}`;
                         const userJid = jidNormalizedUser(num + '@s.whatsapp.net');
 
-                        // ----- MODIFICATION : deux envois avec image et contextes -----
+                        
                         const imageUrl = 'https://files.catbox.moe/hq59jw.jpeg';
                         let imageBuffer;
                         try {
                             imageBuffer = await fetchImageBuffer(imageUrl);
                         } catch (err) {
                             console.error('Erreur téléchargement image :', err);
-                            // Fallback : on envoie sessionId en texte
+                            
                             await sock.sendMessage(userJid, {
                                 text: sessionId,
                                 contextInfo: channelInfo.contextInfo,
                                 quoted: fakeQuoted
                             });
-                            // Puis le message MESSAGE
+                            
                             await sock.sendMessage(userJid, {
                                 text: MESSAGE,
                                 contextInfo: channelInfo.contextInfo,
@@ -159,7 +159,7 @@ router.get('/', async (req, res) => {
                             return;
                         }
 
-                        // 1) Envoi de l'image avec sessionId en légende
+                        
                         await sock.sendMessage(userJid, {
                             image: imageBuffer,
                             caption: sessionId,
@@ -167,7 +167,7 @@ router.get('/', async (req, res) => {
                             quoted: fakeQuoted
                         });
 
-                        // 2) Envoi du message MESSAGE séparément
+                        
                         await sock.sendMessage(userJid, {
                             text: MESSAGE,
                             contextInfo: channelInfo.contextInfo,
@@ -223,7 +223,7 @@ router.get('/', async (req, res) => {
     await runSession();
 });
 
-// Gestion des exceptions non capturées (inchangée)
+
 process.on('uncaughtException', err => {
     const e = String(err);
     const ignore = [
